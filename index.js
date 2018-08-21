@@ -13,12 +13,8 @@ const BAMARAMA_BOX = 80086,
 	HATS = [80089, 80090], // Afro, Chef's
 	ITEMS = [ROOT_BEER, ...Object.keys(TRASH).map(id => Number(id))]
 
-const Command = require('command')
-const GameState = require('tera-game-state')
 
-module.exports = function RootBeer(dispatch) {
-	const command = Command(dispatch)
-	const game = GameState(dispatch)
+module.exports = function RootBeer(mod) {
 
 	let hooks = [],
 		gameId = null,
@@ -29,21 +25,21 @@ module.exports = function RootBeer(dispatch) {
 		statRootBeers = 0,
 		invenHook = null
 
-	command.add('rootbeer', () => {
+	mod.command.add('rootbeer', () => {
 		if(enabled = !enabled) {
 			load()
 			openBox()
-			command.message('Auto-Rootbeer started.')
+			mod.command.message('Auto-Rootbeer started.')
 		}
 		else stop()
 	})
 
-	//dispatch.hook('S_LOGIN', 9, event => { ({gameId} = event) })
-	dispatch.hook('S_SPAWN_ME', 3, event => { myLocation = event })
-	dispatch.hook('C_PLAYER_LOCATION', 5, event => { myLocation = event })
+	//mod.dispatch.hook('S_LOGIN', 9, event => { ({gameId} = event) })
+	mod.dispatch.hook('S_SPAWN_ME', 3, event => { myLocation = event })
+	mod.dispatch.hook('C_PLAYER_LOCATION', 5, event => { myLocation = event })
 
 	function openBox() {
-		dispatch.toServer('C_USE_ITEM', 3, {
+		mod.dispatch.toServer('C_USE_ITEM', 3, {
 			gameId: game.me.gameId,
 			id: BAMARAMA_BOX,
 			amount: 1,
@@ -59,18 +55,18 @@ module.exports = function RootBeer(dispatch) {
 		clearTimeout(timer)
 		unload()
 		enabled = false
-		command.message('Auto-Rootbeer stopped.' + (!statTotal ? '' : ` Unboxed ${statRootBeers}/${statTotal} (${(Math.floor(statRootBeers / statTotal * 1000) / 10) || '0'}%).`))
+		mod.command.message('Auto-Rootbeer stopped.' + (!statTotal ? '' : ` Unboxed ${statRootBeers}/${statTotal} (${(Math.floor(statRootBeers / statTotal * 1000) / 10) || '0'}%).`))
 		statTotal = statRootBeers = 0
 	}
 
 	function load() {
-		function hook() { hooks.push(dispatch.hook(...arguments)) }
+		function hook() { hooks.push(mod.dispatch.hook(...arguments)) }
 
 		let invenItems = null
 
-		if(invenHook) dispatch.unhook(invenHook)
+		if(invenHook) mod.dispatch.unhook(invenHook)
 
-		invenHook = dispatch.hook('S_INVEN', 14, event => {
+		invenHook = mod.dispatch.hook('S_INVEN', 14, event => {
 			invenItems = event.first ? event.items : invenItems.concat(event.items)
 
 			if(!event.more) {
@@ -111,7 +107,7 @@ module.exports = function RootBeer(dispatch) {
 
 				invenItems = null
 
-				if(!enabled) dispatch.unhook(invenHook) // Unhook after we've cleaned up
+				if(!enabled) mod.dispatch.unhook(invenHook) // Unhook after we've cleaned up
 			}
 		})
 
@@ -131,14 +127,14 @@ module.exports = function RootBeer(dispatch) {
 
 	function unload() {
 		if(hooks.length) {
-			for(let h of hooks) dispatch.unhook(h)
+			for(let h of hooks) mod.dispatch.unhook(h)
 
 			hooks = []
 		}
 	}
 
 	function deleteItem(slot, amount) {
-		dispatch.toServer('C_DEL_ITEM', 2, {
+		mod.dispatch.toServer('C_DEL_ITEM', 2, {
 			gameId: game.me.gameId,
 			slot: slot - 40,
 			amount: amount
@@ -146,7 +142,7 @@ module.exports = function RootBeer(dispatch) {
 	}
 
 	function mergeItem(slotFrom, slotTo) {
-		dispatch.toServer('C_MERGE_ITEM', 1, {slotFrom, slotTo})
+		mod.dispatch.toServer('C_MERGE_ITEM', 1, {slotFrom, slotTo})
 	}
-	this.destructor = () => { command.remove('rootbeer') }
+	this.destructor = () => { mod.command.remove('rootbeer') }
 }
