@@ -34,12 +34,12 @@ module.exports = function RootBeer(mod) {
 		else stop()
 	})
 
-	//mod.dispatch.hook('S_LOGIN', 9, event => { ({gameId} = event) })
-	mod.dispatch.hook('S_SPAWN_ME', 3, event => { myLocation = event })
-	mod.dispatch.hook('C_PLAYER_LOCATION', 5, event => { myLocation = event })
+	//mod.hook('S_LOGIN', 9, event => { ({gameId} = event) })
+	mod.hook('S_SPAWN_ME', 3, event => { myLocation = event })
+	mod.hook('C_PLAYER_LOCATION', 5, event => { myLocation = event })
 
 	function openBox() {
-		mod.dispatch.toServer('C_USE_ITEM', 3, {
+		mod.toServer('C_USE_ITEM', 3, {
 			gameId: mod.game.me.gameId,
 			id: BAMARAMA_BOX,
 			amount: 1,
@@ -60,13 +60,13 @@ module.exports = function RootBeer(mod) {
 	}
 
 	function load() {
-		function hook() { hooks.push(mod.dispatch.hook(...arguments)) }
+		function hook() { hooks.push(mod.hook(...arguments)) }
 
 		let invenItems = null
 
-		if(invenHook) mod.dispatch.unhook(invenHook)
+		if(invenHook) mod.unhook(invenHook)
 
-		invenHook = mod.dispatch.hook('S_INVEN', 14, event => {
+		invenHook = mod.hook('S_INVEN', 14, event => {
 			invenItems = event.first ? event.items : invenItems.concat(event.items)
 
 			if(!event.more) {
@@ -107,11 +107,11 @@ module.exports = function RootBeer(mod) {
 
 				invenItems = null
 
-				if(!enabled) mod.dispatch.unhook(invenHook) // Unhook after we've cleaned up
+				if(!enabled) mod.unhook(invenHook) // Unhook after we've cleaned up
 			}
 		})
 
-		hook('S_SYSTEM_MESSAGE_LOOT_ITEM', 1, event => {
+		mod.hook('S_SYSTEM_MESSAGE_LOOT_ITEM', 1, event => {
 			if(ITEMS.includes(event.item)) {
 				clearTimeout(timer)
 
@@ -122,19 +122,19 @@ module.exports = function RootBeer(mod) {
 			}
 		})
 
-		hook('C_RETURN_TO_LOBBY', 'raw', () => false) // Prevents you from being automatically logged out while AFK
+		mod.hook('C_RETURN_TO_LOBBY', 'raw', () => false) // Prevents you from being automatically logged out while AFK
 	}
 
 	function unload() {
 		if(hooks.length) {
-			for(let h of hooks) mod.dispatch.unhook(h)
+			for(let h of hooks) mod.unhook(h)
 
 			hooks = []
 		}
 	}
 
 	function deleteItem(slot, amount) {
-		mod.dispatch.toServer('C_DEL_ITEM', 2, {
+		mod.toServer('C_DEL_ITEM', 2, {
 			gameId: mod.game.me.gameId,
 			slot: slot - 40,
 			amount: amount
@@ -142,7 +142,7 @@ module.exports = function RootBeer(mod) {
 	}
 
 	function mergeItem(slotFrom, slotTo) {
-		mod.dispatch.toServer('C_MERGE_ITEM', 1, {slotFrom, slotTo})
+		mod.toServer('C_MERGE_ITEM', 1, {slotFrom, slotTo})
 	}
 	this.destructor = () => { mod.command.remove('rootbeer') }
 }
