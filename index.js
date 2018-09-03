@@ -40,7 +40,7 @@ module.exports = function RootBeer(mod) {
 
 	function openBox() {
 		mod.dispatch.toServer('C_USE_ITEM', 3, {
-			gameId: game.me.gameId,
+			gameId: mod.game.gameId,
 			id: BAMARAMA_BOX,
 			amount: 1,
 			loc: myLocation.loc,
@@ -135,7 +135,7 @@ module.exports = function RootBeer(mod) {
 
 	function deleteItem(slot, amount) {
 		mod.dispatch.toServer('C_DEL_ITEM', 2, {
-			gameId: gameId,
+			gameId: mod.game.gameId,
 			slot: slot - 40,
 			amount: amount
 		})
