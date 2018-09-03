@@ -135,7 +135,7 @@ module.exports = function RootBeer(mod) {
 
 	function deleteItem(slot, amount) {
 		mod.dispatch.toServer('C_DEL_ITEM', 2, {
-			gameId: game.me.gameId,
+			gameId: gameId,
 			slot: slot - 40,
 			amount: amount
 		})
