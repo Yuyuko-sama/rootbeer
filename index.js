@@ -25,7 +25,8 @@ module.exports = function RootBeer(mod) {
 		invenHook = null
 
 	mod.command.add('rootbeer', () => {
-		if(enabled = !enabled) {
+		enabled = !enabled
+		if(enabled) {
 			load()
 			openBox()
 			mod.command.message('Auto-Rootbeer started.')
