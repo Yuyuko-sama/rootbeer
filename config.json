@@ -3,7 +3,7 @@
 	"autoTrashItems": {
 		"beer": true,
 		"wine": true,
-		"lotus": true,
+		"lotus": false,
 		"moongourd": true,
 		"afro": true,
 		"chefHat": true

@@ -1,5 +1,7 @@
 {
-	"disableAutoUpdate": false,
-	"servers": ["https://raw.githubusercontent.com/Yuyuko-sama/rootbeer/master/"],
-	"supportUrl": "https://discord.gg/maqBmJV"
+    "disableAutoUpdate": false,
+    "options": {
+    },
+    "servers": ["https://raw.githubusercontent.com/Yuyuko-sama/rootbeer/master/"],
+    "supportUrl": "https://github.com/Yuyuko-sama/rootbeer/issues"
 }

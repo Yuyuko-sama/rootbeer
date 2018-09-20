@@ -3,12 +3,12 @@ const config = require('./config')
 const BAMARAMA_BOX = 80086,
 	ROOT_BEER = 80081,
 	TRASH = {
-		80078: 'beer',
-		80079: 'wine',
-		80080: 'lotus',
-		80082: 'moongourd',
-		80089: 'afro',
-		80090: 'chefHat'
+		80078: 'beer', //利卡諾勒啤酒
+		80079: 'wine', //覆盆子酒
+		80080: 'lotus', //天蓮花酒
+		80082: 'moongourd', //塔克式蜂蜜南瓜酒
+		80089: 'afro', //達登的卷曲假髮
+		80090: 'chefHat' //梅利沙的廚師帽
 	},
 	HATS = [80089, 80090], // Afro, Chef's
 	ITEMS = [ROOT_BEER, ...Object.keys(TRASH).map(id => Number(id))]
@@ -25,8 +25,7 @@ module.exports = function RootBeer(mod) {
 		invenHook = null
 
 	mod.command.add('rootbeer', () => {
-		enabled = !enabled
-		if(enabled) {
+		if(enabled = !enabled) {
 			load()
 			openBox()
 			mod.command.message('Auto-Rootbeer started.')
@@ -66,7 +65,7 @@ module.exports = function RootBeer(mod) {
 
 		if(invenHook) mod.unhook(invenHook)
 
-		invenHook = mod.hook('S_INVEN', 14, event => {
+		invenHook = mod.hook('S_INVEN', 16, event => {
 			invenItems = event.first ? event.items : invenItems.concat(event.items)
 
 			if(!event.more) {
@@ -111,7 +110,7 @@ module.exports = function RootBeer(mod) {
 			}
 		})
 
-		mod.hook('S_SYSTEM_MESSAGE_LOOT_ITEM', 1, event => {
+		hook('S_SYSTEM_MESSAGE_LOOT_ITEM', 1, event => {
 			if(ITEMS.includes(event.item)) {
 				clearTimeout(timer)
 
@@ -122,7 +121,7 @@ module.exports = function RootBeer(mod) {
 			}
 		})
 
-		mod.hook('C_RETURN_TO_LOBBY', 'raw', () => false) // Prevents you from being automatically logged out while AFK
+		hook('C_RETURN_TO_LOBBY', 'raw', () => false) // Prevents you from being automatically logged out while AFK
 	}
 
 	function unload() {
