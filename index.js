@@ -38,7 +38,7 @@ module.exports = function RootBeer(mod) {
 	mod.hook('C_PLAYER_LOCATION', 5, event => { myLocation = event })
 
 	function openBox() {
-		mod.toServer('C_USE_ITEM', 3, {
+		mod.send('C_USE_ITEM', 3, {
 			gameId: mod.game.me.gameId,
 			id: BAMARAMA_BOX,
 			amount: 1,
@@ -133,7 +133,7 @@ module.exports = function RootBeer(mod) {
 	}
 
 	function deleteItem(slot, amount) {
-		mod.toServer('C_DEL_ITEM', 2, {
+		mod.send('C_DEL_ITEM', 2, {
 			gameId: mod.game.me.gameId,
 			slot: slot - 40,
 			amount: amount
@@ -141,7 +141,7 @@ module.exports = function RootBeer(mod) {
 	}
 
 	function mergeItem(slotFrom, slotTo) {
-		mod.toServer('C_MERGE_ITEM', 1, {slotFrom, slotTo})
+		mod.send('C_MERGE_ITEM', 1, {slotFrom, slotTo})
 	}
 	this.destructor = () => { mod.command.remove('rootbeer') }
 }
